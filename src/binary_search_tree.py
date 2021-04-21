@@ -4,24 +4,26 @@ class TreeNode:
         self.value = value
         self.left = left
         self.right = right
-        self.size = 0
+        self.size = 1
 
 
-class Tree:
+class BST:
     def __init__(self):
         self.root = None
 
     def is_empty(self):
-        return self.root.size == 0
+        return self.root is None
 
     def put(self, key, value):
         def put_rec(node):
             if node is None:
                 return TreeNode(key, value)
-            if node.key < key:
+            if node.key > key:
                 node.left = put_rec(node.left)
             else:
                 node.right = put_rec(node.right)
+            node.size += 1
+            return node
 
         self.root = put_rec(self.root)
 
@@ -29,7 +31,7 @@ class Tree:
         def get_rec(node):
             if node.key == key:
                 return node.value
-            if node.key < key:
+            if node.key > key:
                 return get_rec(node.left) if node.left else None
             return get_rec(node.right) if node.right else None
 
@@ -40,7 +42,7 @@ class Tree:
             if node is None: return True
             if _min is not None and node.key >= _min: return False
             if _max is not None and node.key >= _max: return False
-            return True
+            return _is_bst(node.left, _min, node.key) and _is_bst(node.right, node.key, _max)
 
         return _is_bst(self.root, None, None)
 
@@ -100,6 +102,15 @@ class Tree:
 
         return height_helper(self.root)
 
-    def is_mirror_at_root(self):
-        pass
+    def get_min(self):
+        def get_min_rec(node):
+            if node is None:
+                return None
+            if node.left is None:
+                return node
+            return get_min_rec(node.left)
+        min_node = get_min_rec(self.root)
+        if min_node is None:
+            return None, None
+        return min_node.key, min_node.value
    
